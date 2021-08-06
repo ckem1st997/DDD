@@ -1,4 +1,5 @@
-﻿using DDD.Domain.Entity;
+﻿using AutoMapper;
+using DDD.Domain.Entity;
 using DDD.Domain.IRepositories;
 using MediatR;
 using System;
@@ -12,20 +13,23 @@ namespace DDD.API.Application.Commands.Create
     public class CreateProductsCommandHandler : IRequestHandler<CreateProductsCommand, bool>
     {
         private readonly IRepositoryEF<Products> _repository;
-
-        public CreateProductsCommandHandler(IRepositoryEF<Products> repository)
+        private readonly IMapper _mapper;
+        public CreateProductsCommandHandler(IRepositoryEF<Products> repository, IMapper mapper)
         {
-            _repository = repository ?? throw new ArgumentNullException(nameof(repository)); ;
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _mapper = mapper;
         }
 
         public async Task<bool> Handle(CreateProductsCommand request, CancellationToken cancellationToken)
         {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
-            var result = await _repository.AddAsync(request.Products);
-            if (result != null)
-                return await _repository.UnitOfWork.SaveEntitiesAsync();
-            return false;
+            var mode = _mapper.Map<Products>(request.ProductsCommand);
+            mode.CreateDate = DateTime.UtcNow;
+            mode.ModiDate = DateTime.UtcNow;
+            await _repository.AddAsync(mode);
+
+            return await _repository.UnitOfWork.SaveEntitiesAsync();
         }
     }
 }

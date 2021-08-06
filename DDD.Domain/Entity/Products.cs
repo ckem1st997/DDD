@@ -13,5 +13,8 @@ namespace DDD.Domain.Entity
 
         public decimal Price { get; set; }
         public string Image { get; set; }
+
+        public DateTime CreateDate { get; set; }
+        public DateTime ModiDate { get; set; }
     }
 }
