@@ -54,7 +54,6 @@ namespace DDD.API.Controllers
         [HttpPost("first/{id}")]
         public async Task<IActionResult> First(int id)
         {
-
             return Ok(await _mediat.Send(new GetFirstProductsCommand() { Id = id }));
         }
 
