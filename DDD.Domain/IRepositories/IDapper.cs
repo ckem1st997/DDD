@@ -13,6 +13,7 @@ namespace DDD.Domain.IRepositories
     {
         DbConnection GetDbconnection();
         Task<T> GetAyncFirst<T>(string sp, DynamicParameters parms, CommandType commandType = CommandType.StoredProcedure);
+        Task<IEnumerable<T>> GetList<T>(string sp, DynamicParameters parms, CommandType commandType = CommandType.StoredProcedure);
         Task<IEnumerable<T>> GetAllAync<T>(string sp, DynamicParameters parms, CommandType commandType = CommandType.StoredProcedure);
 
     }

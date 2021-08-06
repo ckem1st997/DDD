@@ -5,6 +5,7 @@ using DDD.API.Application.Commands.Update;
 using DDD.API.Application.Models;
 using DDD.API.Application.Queries.GetAll;
 using DDD.API.Application.Queries.GetFisrt;
+using DDD.API.Application.Queries.GetList;
 using DDD.Domain.Entity;
 using DDD.Domain.IRepositories;
 using DDD.Infrastructure.Context;
@@ -43,11 +44,18 @@ namespace DDD.API.Controllers
             return Ok(await _mediat.Send(new CreateProductsCommand() { ProductsCommand = products }));
         }
 
-        [HttpPost("search/{id}")]
-        public async Task<IActionResult> Search([FromBody] Products products, int id)
+        [HttpPost("search")]
+        public async Task<IActionResult> Search([FromBody] Products products)
         {
 
-            return Ok(await _mediat.Send(new GetFirstProductsCommand() { Id = id, Price = products.Price, Name = products.Name }));
+            return Ok(await _mediat.Send(new GetListProductsCommand() {Price = products.Price, Name = products.Name }));
+        }
+
+        [HttpPost("first/{id}")]
+        public async Task<IActionResult> First(int id)
+        {
+
+            return Ok(await _mediat.Send(new GetFirstProductsCommand() { Id = id }));
         }
 
         [HttpPost("edit")]

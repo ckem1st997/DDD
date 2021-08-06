@@ -14,11 +14,6 @@ namespace DDD.API.Application.Queries.GetFisrt
         [DataMember]
         public int Id { get; set; }
 
-        [DataMember]
-        public decimal Price { get; set; }
-
-        [DataMember]
-        public string Name { get; set; }
     }
 }
 

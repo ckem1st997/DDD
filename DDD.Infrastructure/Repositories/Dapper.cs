@@ -40,10 +40,16 @@ namespace DDD.Infrastructure.Repositories
             using var connection = new SqlConnection(_config.GetConnectionString(Connectionstring));
             return await connection.QueryAsync<T>(sp, parms, commandType: commandType);
         }
-
+        public async Task<IEnumerable<T>> GetList<T>(string sp, DynamicParameters parms, CommandType commandType )
+        {
+            using var connection = new SqlConnection(_config.GetConnectionString(Connectionstring));
+            return await connection.QueryAsync<T>(sp, parms, commandType: commandType);
+        }
         public DbConnection GetDbconnection()
         {
             return new SqlConnection(_config.GetConnectionString(Connectionstring));
         }
+
+      
     }
 }

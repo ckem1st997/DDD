@@ -23,11 +23,9 @@ namespace DDD.API.Application.Queries.GetFisrt
         }
         public async Task<ProductsDTO> Handle(GetFirstProductsCommand request, CancellationToken cancellationToken)
         {
-            string sql = @"select * from Products where Id=@id and Name like @name and Price>= @price";
+            string sql = @"select * from Products where Id=@id";
             DynamicParameters parameter = new DynamicParameters();
             parameter.Add("@id", request.Id);
-            parameter.Add("@name", '%' + request.Name + '%');
-            parameter.Add("@price", request.Price);
             return await _repository.GetAyncFirst<ProductsDTO>(sql, parameter, CommandType.Text);
         }
     }
