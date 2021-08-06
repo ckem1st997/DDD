@@ -13,12 +13,12 @@ namespace DDD.API.Infrastructure.AutofacModules
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterAssemblyTypes(typeof(IMediator).GetTypeInfo().Assembly)
-                .AsImplementedInterfaces();
+            //builder.RegisterAssemblyTypes(typeof(IMediator).GetTypeInfo().Assembly)
+            //    .AsImplementedInterfaces();
 
-            // Register all the Command classes (they implement IRequestHandler) in assembly holding the Commands
-            builder.RegisterAssemblyTypes(typeof(CreateProductsCommand).GetTypeInfo().Assembly)
-                .AsClosedTypesOf(typeof(IRequestHandler<,>));
+            //// Register all the Command classes (they implement IRequestHandler) in assembly holding the Commands
+            //builder.RegisterAssemblyTypes(typeof(CreateProductsCommand).GetTypeInfo().Assembly)
+            //    .AsClosedTypesOf(typeof(IRequestHandler<,>));
 
 
             builder.Register<ServiceFactory>(context =>

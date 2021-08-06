@@ -17,7 +17,6 @@ namespace DDD.API.Application.Validations.ConfigureServices
             services.AddFluentValidation();
             services.AddTransient<IValidator<CreateProductsCommand>, CreateProductsCommandValidator>();
             services.AddTransient<IValidator<UpdateProductsCommand>, UpdateProductsCommandValidator>();
-           // services.AddTransient<IValidator<ProductsDTO>, ProductsDTOVa>();
         }
     }
 }

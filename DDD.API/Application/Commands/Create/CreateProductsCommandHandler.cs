@@ -27,9 +27,8 @@ namespace DDD.API.Application.Commands.Create
             var mode = _mapper.Map<Products>(request.ProductsCommand);
             mode.CreateDate = DateTime.UtcNow;
             mode.ModiDate = DateTime.UtcNow;
-            await _repository.AddAsync(mode);
-
-            return await _repository.UnitOfWork.SaveEntitiesAsync();
+           var t= await _repository.AddAsync(mode);
+            return await _repository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
         }
     }
 }

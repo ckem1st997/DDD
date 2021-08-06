@@ -1,3 +1,4 @@
+using Autofac;
 using DDD.API.Application.AutoMapper;
 using DDD.API.Application.AutoMapper.ConfigureServices;
 using DDD.API.Application.Behaviors.ConfigureServices;
@@ -20,7 +21,7 @@ using Microsoft.OpenApi.Models;
 using System;
 
 using System.Reflection;
-
+using System.Text.Json.Serialization;
 
 namespace DDD.API
 {
@@ -45,9 +46,9 @@ namespace DDD.API
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.WriteIndented = true;
-              //      options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+                    //options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
                 })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0).AddNewtonsoftJson();
 
             services.AddSwaggerGen(c =>
             {
@@ -70,6 +71,7 @@ namespace DDD.API
             services.AddMapper();
             services.AddValidator();
             services.AddBehavior();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

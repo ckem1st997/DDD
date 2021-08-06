@@ -12,9 +12,11 @@ namespace DDD.Domain.IRepositories
     {
         public IUnitOfWork UnitOfWork { get; }
         Task<T> GetFirstAsync(int id);
+        Task<T> GetFirstAsyncAsNoTracking(int id);
         Task<T> AddAsync(T entity);
         Task<IEnumerable<T>> ListAllAsync();
-        T Update(T entity);
-        T Delete(T entity);
+        void Update(T entity);
+        void Delete(T entity);
+ 
     }
 }

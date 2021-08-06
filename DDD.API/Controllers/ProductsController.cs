@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DDD.API.Application.Commands.Create;
+using DDD.API.Application.Commands.Delete;
 using DDD.API.Application.Commands.Update;
 using DDD.API.Application.Models;
 using DDD.API.Application.Queries.GetAll;
@@ -54,6 +55,13 @@ namespace DDD.API.Controllers
         {
 
             return Ok(await _mediat.Send(new UpdateProductsCommand() { ProductsCommand=products}));
+        }
+
+
+        [HttpPost("delete/{id}")]
+        public async Task<IActionResult> Edit(int id)
+        {
+            return Ok(await _mediat.Send(new DeleteProductsCommand() { Id=id }));
         }
 
     }

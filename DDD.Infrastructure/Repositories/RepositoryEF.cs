@@ -25,9 +25,9 @@ namespace DDD.Infrastructure.Repositories
         public RepositoryEF(ProductsContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
-            _dbSet=_context.Set<T>() ?? throw new ArgumentNullException(nameof(_context));
+            _dbSet = _context.Set<T>() ?? throw new ArgumentNullException(nameof(_context));
         }
-        public async Task<T> AddAsync(T entity)
+        public virtual async Task<T> AddAsync(T entity)
         {
             if (entity.IsTransient())
             {
@@ -40,25 +40,36 @@ namespace DDD.Infrastructure.Repositories
 
         }
 
-        public T Delete(T entity)
+        public virtual void Delete(T entity)
         {
-            return _dbSet.Remove(entity).Entity;
+            if (_context.Entry(entity).State == EntityState.Detached)
+            {
+                _dbSet.Attach(entity);
+            }
+            _dbSet.Remove(entity);
         }
 
 
-        public async Task<T> GetFirstAsync(int id)
+        public virtual async Task<T> GetFirstAsync(int id)
         {
             return await _dbSet.FirstOrDefaultAsync(x => x.Id.Equals(id));
         }
 
-        public async Task<IEnumerable<T>> ListAllAsync()
+        public virtual async Task<T> GetFirstAsyncAsNoTracking(int id)
+        {
+            return await _dbSet.AsNoTracking().FirstOrDefaultAsync(x => x.Id.Equals(id));
+        }
+
+        public virtual async Task<IEnumerable<T>> ListAllAsync()
         {
             return await _dbSet.Where(x => x.Id > 0).ToListAsync();
         }
 
-        public T Update(T entity)
+        public virtual void Update(T entity)
         {
-            return _dbSet.Update(entity).Entity;
+            //  return _dbSet.Update(entity).Entity;
+            _dbSet.Attach(entity);
+            _context.Entry(entity).State = EntityState.Modified;
         }
     }
 }
