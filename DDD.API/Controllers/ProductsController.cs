@@ -3,6 +3,7 @@ using DDD.API.Application.Commands.Create;
 using DDD.API.Application.Commands.Delete;
 using DDD.API.Application.Commands.Update;
 using DDD.API.Application.DomainEventHandlers.CreateProducts;
+using DDD.API.Application.IntegrationEvents.Events;
 using DDD.API.Application.Models;
 using DDD.API.Application.Queries.GetAll;
 using DDD.API.Application.Queries.GetFisrt;
@@ -40,7 +41,7 @@ namespace DDD.API.Controllers
         public async Task<IActionResult> Get([FromBody] getall getall)
         {
             _event.Publish(getall);
-            return Ok(await _mediat.Send(new GetAllProductsCommand() { All =getall.all }));
+            return Ok(await _mediat.Send(new GetAllProductsCommand() { All = getall.all }));
         }
 
         [HttpPost]
@@ -58,6 +59,18 @@ namespace DDD.API.Controllers
             return CreatedAtRoute("First", new { id = mode.Id }, mode);
         }
 
+        [HttpPost("add-user")]
+        public IActionResult CreateUser([FromBody] AddUsersIntegrationEvent addUsers)
+        {
+
+            // tạo sự kiện và gửi lên Rabbit
+            // nếu server không hoạt động, thì khi hoạt động, sẽ gửi trực tiếp đến server đó
+            // nếu server hoạt động, thì sẽ gửi đến luôn để xử lý
+            _event.Publish(addUsers);
+
+            return Ok("Xin vui lòng đợi để hoàn tất nha !");
+        }
+
         [HttpPost("search")]
         public async Task<IActionResult> Search([FromBody] Productsr products)
         {
@@ -69,9 +82,9 @@ namespace DDD.API.Controllers
         {
             public bool all { get; set; }
         }
-        public record Productsr: IntegrationEvent
+        public record Productsr : IntegrationEvent
         {
-          // public int Id { get; set; }
+            // public int Id { get; set; }
             public string Name { get; set; }
 
             public decimal Price { get; set; }
@@ -80,7 +93,7 @@ namespace DDD.API.Controllers
             public DateTime? CreateDate { get; set; }
             public DateTime? ModiDate { get; set; }
         }
-        [HttpPost("first",Name = "First")]
+        [HttpPost("first", Name = "First")]
         public async Task<IActionResult> First(int id)
         {
             return Ok(await _mediat.Send(new GetFirstProductsCommand() { Id = id }));

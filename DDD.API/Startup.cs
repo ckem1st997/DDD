@@ -104,6 +104,8 @@ namespace DDD.API
             {
                 endpoints.MapControllers();
             });
+
+            EventBusMQ.ConfigureEventBus(app);
         }
     }
 }

@@ -7,12 +7,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using UserAPI.IntegrationEvents.EventHandling;
+using UserAPI.IntegrationEvents.Events;
 
-namespace DDD.API.ConfigureServices.EventBus
+namespace UserAPI.ConfigureServices.EventBus
 {
     public static class EventBusMQ
     {
@@ -37,17 +35,15 @@ namespace DDD.API.ConfigureServices.EventBus
 
             services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
             // thêm xử lí event trong app
-            //   services.AddTransient<OrderStartedIntegrationEventHandler>();
+               services.AddTransient<AddUsersIntegrationEventHandler>();
         }
 
 
-        public static void ConfigureEventBus(IApplicationBuilder app)
+        public static void ConfigureEventBus(this IApplicationBuilder app)
         {
             var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
-
-
             // đăng ký xử lý
-            //  eventBus.Subscribe<OrderStartedIntegrationEvent, OrderStartedIntegrationEventHandler>();
+              eventBus.Subscribe<AddUsersIntegrationEvent, AddUsersIntegrationEventHandler>();
         }
     }
 }

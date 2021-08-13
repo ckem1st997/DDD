@@ -28,7 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Application\IntegrationEvents\Events\" />
     <Folder Include="Application\IntegrationEvents\EventHandling\" />
   </ItemGroup>
 
