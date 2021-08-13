@@ -28,7 +28,7 @@ namespace UserAPI.IntegrationEvents.EventHandling
         {
             using (LogContext.PushProperty("IntegrationEventContext", $"{@event.Id}"))
             {
-                _logger.LogInformation("----- Handling integration event: {IntegrationEventId} - ({@IntegrationEvent})", @event.Id, @event);
+                _logger.LogInformation("----- Handling integration event: {IntegrationEventId} at UserAPI - ({@IntegrationEvent})", @event.Id, @event);
 
                 var user = new Users();
                 user.Username = @event.Username;

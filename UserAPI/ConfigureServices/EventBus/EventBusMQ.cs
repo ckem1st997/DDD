@@ -3,10 +3,14 @@ using Autofac;
 using EventBus;
 using EventBus.Abstractions;
 using EventBusRabbitMQ;
+using IntegrationEventLogEF.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Data.Common;
+using UserAPI.IntegrationEvents;
 using UserAPI.IntegrationEvents.EventHandling;
 using UserAPI.IntegrationEvents.Events;
 
@@ -16,6 +20,11 @@ namespace UserAPI.ConfigureServices.EventBus
     {
         public static void AddEventBus(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddTransient<Func<DbConnection, IIntegrationEventLogService>>(
+               sp => (DbConnection c) => new IntegrationEventLogService(c));
+
+            services.AddTransient<IUsersIntegrationEventService, UsersIntegrationEventService>();
+
             services.AddSingleton<IEventBus, EventRabbitMQ>(sp =>
             {
                 var subscriptionClientName = configuration["SubscriptionClientName"];

@@ -1,14 +1,17 @@
 ﻿
 using Autofac;
+using DDD.API.Application.IntegrationEvents;
 using EventBus;
 using EventBus.Abstractions;
 using EventBusRabbitMQ;
+using IntegrationEventLogEF.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,6 +21,12 @@ namespace DDD.API.ConfigureServices.EventBus
     {
         public static void AddEventBus(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddTransient<Func<DbConnection, IIntegrationEventLogService>>(
+               sp => (DbConnection c) => new IntegrationEventLogService(c));
+
+            services.AddTransient<IProductsIntegrationEventService, ProductsIntegrationEventService>();
+
+
             services.AddSingleton<IEventBus, EventRabbitMQ>(sp =>
             {
                 var subscriptionClientName = configuration["SubscriptionClientName"];

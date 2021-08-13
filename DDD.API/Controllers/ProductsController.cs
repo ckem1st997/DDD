@@ -3,6 +3,7 @@ using DDD.API.Application.Commands.Create;
 using DDD.API.Application.Commands.Delete;
 using DDD.API.Application.Commands.Update;
 using DDD.API.Application.DomainEventHandlers.CreateProducts;
+using DDD.API.Application.IntegrationEvents;
 using DDD.API.Application.IntegrationEvents.Events;
 using DDD.API.Application.Models;
 using DDD.API.Application.Queries.GetAll;
@@ -31,10 +32,12 @@ namespace DDD.API.Controllers
 
         private readonly IMediator _mediat;
         private readonly IEventBus _event;
-        public ProductsController(IMediator mediat, IEventBus @event)
+        private readonly IProductsIntegrationEventService _productsIntegrationEventService;
+        public ProductsController(IMediator mediat, IEventBus @event, IProductsIntegrationEventService productsIntegrationEventService)
         {
             _mediat = mediat ?? throw new ArgumentNullException(nameof(mediat));
             _event = @event;
+            _productsIntegrationEventService = productsIntegrationEventService;
         }
 
         [HttpPost("getall")]
@@ -60,13 +63,20 @@ namespace DDD.API.Controllers
         }
 
         [HttpPost("add-user")]
-        public IActionResult CreateUser([FromBody] AddUsersIntegrationEvent addUsers)
+        public async Task<IActionResult> CreateUserAsync([FromBody] AddUsersIntegrationEvent addUsers)
         {
 
             // tạo sự kiện và gửi lên Rabbit
             // nếu server không hoạt động, thì khi hoạt động, sẽ gửi trực tiếp đến server đó
             // nếu server hoạt động, thì sẽ gửi đến luôn để xử lý
-            _event.Publish(addUsers);
+
+            //  _event.Publish(addUsers);
+
+
+            // lưu lại dữ liệu định public vào db
+            await _productsIntegrationEventService.SaveEventAndCatalogContextChangesAsync(addUsers);
+            // tiến hành public
+            await _productsIntegrationEventService.PublishThroughEventBusAsync(addUsers);
 
             return Ok("Xin vui lòng đợi để hoàn tất nha !");
         }

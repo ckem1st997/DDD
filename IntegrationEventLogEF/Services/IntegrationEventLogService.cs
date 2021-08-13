@@ -31,6 +31,8 @@ namespace IntegrationEventLogEF.Services
                 .ToList();
         }
 
+
+        // tìm kiếm event chưa được public đã lưu trong db
         public async Task<IEnumerable<IntegrationEventLogEntry>> RetrieveEventLogsPendingToPublishAsync(Guid transactionId)
         {
             var tid = transactionId.ToString();
@@ -47,7 +49,9 @@ namespace IntegrationEventLogEF.Services
             return new List<IntegrationEventLogEntry>();
         }
 
-        public Task SaveEventAsync(IntegrationEvent @event, IDbContextTransaction transaction)
+
+        // thêm một sự kiện vừa được thực thi vào db
+        public async Task<int> SaveEventAsync(IntegrationEvent @event, IDbContextTransaction transaction)
         {
             if (transaction == null) throw new ArgumentNullException(nameof(transaction));
 
@@ -56,27 +60,31 @@ namespace IntegrationEventLogEF.Services
             _integrationEventLogContext.Database.UseTransaction(transaction.GetDbTransaction());
             _integrationEventLogContext.IntegrationEventLogs.Add(eventLogEntry);
 
-            return _integrationEventLogContext.SaveChangesAsync();
+            return await _integrationEventLogContext.SaveChangesAsync();
         }
 
-        public Task MarkEventAsPublishedAsync(Guid eventId)
+
+        // đã public
+        public async Task<int> MarkEventAsPublishedAsync(Guid eventId)
         {
-            return UpdateEventStatus(eventId, EventStateEnum.Published);
+            return await UpdateEventStatusAsync(eventId, EventStateEnum.Published);
         }
 
-        public Task MarkEventAsInProgressAsync(Guid eventId)
+        public async Task<int> MarkEventAsInProgressAsync(Guid eventId)
         {
-            return UpdateEventStatus(eventId, EventStateEnum.InProgress);
+            return await UpdateEventStatusAsync(eventId, EventStateEnum.InProgress);
         }
 
-        public Task MarkEventAsFailedAsync(Guid eventId)
+        public async Task<int> MarkEventAsFailedAsync(Guid eventId)
         {
-            return UpdateEventStatus(eventId, EventStateEnum.PublishedFailed);
+            return await UpdateEventStatusAsync(eventId, EventStateEnum.PublishedFailed);
         }
 
-        private Task UpdateEventStatus(Guid eventId, EventStateEnum status)
+
+        // cập nhật lại trạng thái xem đã được public hay chưa
+        private async Task<int> UpdateEventStatusAsync(Guid eventId, EventStateEnum status)
         {
-            var eventLogEntry = _integrationEventLogContext.IntegrationEventLogs.Single(ie => ie.EventId == eventId);
+            var eventLogEntry = await _integrationEventLogContext.IntegrationEventLogs.FirstAsync(ie => ie.EventId == eventId);
             eventLogEntry.State = status;
 
             if (status == EventStateEnum.InProgress)
@@ -84,7 +92,7 @@ namespace IntegrationEventLogEF.Services
 
             _integrationEventLogContext.IntegrationEventLogs.Update(eventLogEntry);
 
-            return _integrationEventLogContext.SaveChangesAsync();
+            return await _integrationEventLogContext.SaveChangesAsync();
         }
 
         protected virtual void Dispose(bool disposing)

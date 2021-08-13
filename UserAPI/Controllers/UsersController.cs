@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UserAPI.Domain.Entity;
+using UserAPI.IntegrationEvents;
 using UserAPI.Service.UserEntity;
 
 namespace UserAPI.Controllers
@@ -14,9 +15,11 @@ namespace UserAPI.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserRepositories _userRepositories;
-        public UsersController(IUserRepositories userRepositories)
+        private readonly IUsersIntegrationEventService _usersIntegrationEventService;
+        public UsersController(IUserRepositories userRepositories, IUsersIntegrationEventService usersIntegrationEventService)
         {
             _userRepositories = userRepositories;
+            _usersIntegrationEventService = usersIntegrationEventService;
         }
 
 
