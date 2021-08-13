@@ -5,6 +5,10 @@ namespace EventBus.Abstractions
 {
     public interface IEventBus
     {
+        /// <summary>
+        /// Xuất bản một tin nhắn.
+        /// </summary>
+        /// <param name="event"></param>
         void Publish(IntegrationEvent @event);
 
         void Subscribe<T, TH>()

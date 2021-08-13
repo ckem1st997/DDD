@@ -11,6 +11,8 @@ using DDD.Domain.Entity;
 using DDD.Domain.Events;
 using DDD.Domain.IRepositories;
 using DDD.Infrastructure.Context;
+using EventBus.Abstractions;
+using EventBus.Events;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,16 +29,18 @@ namespace DDD.API.Controllers
     {
 
         private readonly IMediator _mediat;
-
-        public ProductsController(IMediator mediat)
+        private readonly IEventBus _event;
+        public ProductsController(IMediator mediat, IEventBus @event)
         {
             _mediat = mediat ?? throw new ArgumentNullException(nameof(mediat));
+            _event = @event;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get()
+        [HttpPost("getall")]
+        public async Task<IActionResult> Get([FromBody] getall getall)
         {
-            return Ok(await _mediat.Send(new GetAllProductsCommand() { All = true }));
+            _event.Publish(getall);
+            return Ok(await _mediat.Send(new GetAllProductsCommand() { All =getall.all }));
         }
 
         [HttpPost]
@@ -55,12 +59,27 @@ namespace DDD.API.Controllers
         }
 
         [HttpPost("search")]
-        public async Task<IActionResult> Search([FromBody] Products products)
+        public async Task<IActionResult> Search([FromBody] Productsr products)
         {
-
+            _event.Publish(products);
             return Ok(await _mediat.Send(new GetListProductsCommand() { Price = products.Price, Name = products.Name }));
         }
 
+        public record getall : IntegrationEvent
+        {
+            public bool all { get; set; }
+        }
+        public record Productsr: IntegrationEvent
+        {
+          // public int Id { get; set; }
+            public string Name { get; set; }
+
+            public decimal Price { get; set; }
+
+            public string Image { get; set; }
+            public DateTime? CreateDate { get; set; }
+            public DateTime? ModiDate { get; set; }
+        }
         [HttpPost("first",Name = "First")]
         public async Task<IActionResult> First(int id)
         {

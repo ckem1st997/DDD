@@ -1,6 +1,7 @@
 ﻿using DDD.API.Application.Models;
 using DDD.Domain.Entity;
 using DDD.Domain.IRepositories;
+using EventBus.Abstractions;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -16,9 +17,11 @@ namespace DDD.API.Application.Queries.GetAll
 
         private readonly IDapper _repository;
 
+
         public GetAllProductsCommandHandler(IDapper repository)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+
         }
         public async Task<IEnumerable<ProductsDTO>> Handle(GetAllProductsCommand request, CancellationToken cancellationToken)
         {

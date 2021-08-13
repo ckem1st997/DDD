@@ -19,13 +19,13 @@ using EventBus.Extensions;
 namespace EventBusRabbitMQ
 {
     // xử lý sự kiện vào hàng đợi
-    public class EventBusRabbitMQ : IEventBus, IDisposable
+    public class EventRabbitMQ : IEventBus, IDisposable
     {
         const string BROKER_NAME = "event_bus";
         const string AUTOFAC_SCOPE_NAME = "event_bus";
 
         private readonly IRabbitMQPersistentConnection _persistentConnection;
-        private readonly ILogger<EventBusRabbitMQ> _logger;
+        private readonly ILogger<EventRabbitMQ> _logger;
         private readonly IEventBusSubscriptionsManager _subsManager;
         private readonly ILifetimeScope _autofac;
         private readonly int _retryCount;
@@ -33,7 +33,7 @@ namespace EventBusRabbitMQ
         private IModel _consumerChannel;
         private string _queueName;
 
-        public EventBusRabbitMQ(IRabbitMQPersistentConnection persistentConnection, ILogger<EventBusRabbitMQ> logger,
+        public EventRabbitMQ(IRabbitMQPersistentConnection persistentConnection, ILogger<EventRabbitMQ> logger,
             ILifetimeScope autofac, IEventBusSubscriptionsManager subsManager, string queueName = null, int retryCount = 5)
         {
             _persistentConnection = persistentConnection ?? throw new ArgumentNullException(nameof(persistentConnection));
@@ -46,6 +46,13 @@ namespace EventBusRabbitMQ
             _subsManager.OnEventRemoved += SubsManager_OnEventRemoved;
         }
 
+
+
+        /// <summary>
+        /// bỏ liên kết một hàng đợi
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="eventName"></param>
         private void SubsManager_OnEventRemoved(object sender, string eventName)
         {
             if (!_persistentConnection.IsConnected)
@@ -67,6 +74,11 @@ namespace EventBusRabbitMQ
             }
         }
 
+
+        /// <summary>
+        /// Xuất bản một tin nhắn.
+        /// </summary>
+        /// <param name="event"></param>
         public void Publish(IntegrationEvent @event)
         {
             if (!_persistentConnection.IsConnected)
@@ -100,8 +112,8 @@ namespace EventBusRabbitMQ
                 {
                     var properties = channel.CreateBasicProperties();
                     properties.DeliveryMode = 2; // persistent
-
                     _logger.LogTrace("Publishing event to RabbitMQ: {EventId}", @event.Id);
+                    _logger.LogInformation("Publishing event to RabbitMQ: {EventId}", @event.Id);
 
                     channel.BasicPublish(
                         exchange: BROKER_NAME,

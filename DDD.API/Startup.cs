@@ -19,9 +19,17 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System;
-
+using DDD.API.ConfigureServices.EventBus;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http;
+using System.Data.Common;
+using IntegrationEventLogEF.Services;
+using EventBusRabbitMQ;
+using Microsoft.Extensions.Logging;
+using RabbitMQ.Client;
+using DDD.API.ConfigureServices.CustomConfiguration;
+using DDD.API.ConfigureServices.CustomIntegrations;
 
 namespace DDD.API
 {
@@ -71,7 +79,9 @@ namespace DDD.API
             services.AddMapper();
             services.AddValidator();
             services.AddBehavior();
-
+            services.AddEventBus(Configuration);
+            services.AddCustomConfiguration(Configuration);
+            services.AddCustomIntegrations(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
