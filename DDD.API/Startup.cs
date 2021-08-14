@@ -1,4 +1,4 @@
-using Autofac;
+﻿using Autofac;
 using DDD.API.Application.AutoMapper;
 using DDD.API.Application.AutoMapper.ConfigureServices;
 using DDD.API.Application.Behaviors.ConfigureServices;
@@ -30,6 +30,10 @@ using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using DDD.API.ConfigureServices.CustomConfiguration;
 using DDD.API.ConfigureServices.CustomIntegrations;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using HealthChecks.UI.Client;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using DDD.API.Application.HealthChecks;
 
 namespace DDD.API
 {
@@ -82,6 +86,11 @@ namespace DDD.API
             services.AddEventBus(Configuration);
             services.AddCustomConfiguration(Configuration);
             services.AddCustomIntegrations(Configuration);
+            services.AddHealthChecksProducts(Configuration);
+            services.AddHealthChecksUI();
+
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -103,6 +112,14 @@ namespace DDD.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+
+                //healthchecks-ui
+                endpoints.MapHealthChecksUI();
+                endpoints.MapHealthChecks("/healthz", new HealthCheckOptions
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
             });
 
             EventBusMQ.ConfigureEventBus(app);

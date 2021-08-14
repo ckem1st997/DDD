@@ -52,6 +52,11 @@ namespace UserAPI.Service.UserEntity
             return await _repositoryEF.ListAllAsync();
         }
 
+        public Task<IEnumerable<Users>> PaginatedList()
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<int> Update(Users entity)
         {
             if (entity == null)

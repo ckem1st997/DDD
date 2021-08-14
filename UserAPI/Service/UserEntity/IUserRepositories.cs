@@ -12,6 +12,7 @@ namespace UserAPI.Service.UserEntity
         Task<Users> GetFirstAsyncAsNoTracking(int id);
         Task<int> AddAsync(Users entity);
         Task<IEnumerable<Users>> ListAllAsync();
+        Task<IEnumerable<Users>> PaginatedList();
         Task<int> Update(Users entity);
         Task<int> Delete(Users entity);
 
