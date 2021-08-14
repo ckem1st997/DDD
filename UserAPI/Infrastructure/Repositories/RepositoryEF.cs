@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using UserAPI.Domain.Entity;
 using UserAPI.Domain.IRepositories;
@@ -63,6 +64,11 @@ namespace UserAPI.Infrastructure.Repositories
             _dbSet.Attach(entity);
             _context.Entry(entity).State = EntityState.Modified;
             return await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<T>> Expression(Expression<Func<T, bool>> filter = null)
+        {
+            return await _context.Set<T>().Where(filter).ToListAsync();
         }
     }
 }

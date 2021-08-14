@@ -23,17 +23,55 @@ namespace UserAPI.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPost("Add")]
         public async Task<IActionResult> Add(Users users)
         {
+            var model = await _userRepositories.Expression(x => x.Username.Equals(users.Username));
+            if (model.Count() > 0)
+                return Ok(false);
             users.Roleu = "User";
             return Ok(await _userRepositories.AddAsync(users));
         }
 
-        [HttpGet]
+        [HttpGet("Get")]
         public async Task<IActionResult> Get()
         {
             return Ok(await _userRepositories.ListAllAsync());
+        }
+
+        [HttpGet("GetFirst")]
+        public async Task<IActionResult> GetFirst(int id)
+        {
+            return Ok(await _userRepositories.GetFirstAsyncAsNoTracking(id));
+        }
+
+
+        [HttpPost("Edit")]
+        public async Task<IActionResult> Edit(Users users)
+        {
+            users.Roleu = "User";
+            return Ok(await _userRepositories.UpdateAsync(users));
+        }
+
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var model = await _userRepositories.GetFirstAsyncAsNoTracking(id);
+
+            if (id < 1 || model == null)
+                return Ok(false);
+
+            return Ok(await _userRepositories.DeleteAsync(model));
+        }
+
+        [HttpPost("PaginatedList")]
+        public async Task<IActionResult> PaginatedList(int index, int number, string key)
+        {
+            if (index < 1 || number < 1)
+                return Ok(false);
+
+            return Ok(await _userRepositories.PaginatedList(index, number, key ?? ""));
         }
 
 

@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace UserAPI.Infrastructure.Middlewares
 {
+
+    // đăng ký chặn trong program
     public static class WebHostBuildertExtensions
     {
         public static IWebHostBuilder UseFailing(this IWebHostBuilder builder, Action<FailingOptions> options)

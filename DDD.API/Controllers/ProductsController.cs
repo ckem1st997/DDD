@@ -2,13 +2,12 @@
 using DDD.API.Application.Commands.Create;
 using DDD.API.Application.Commands.Delete;
 using DDD.API.Application.Commands.Update;
-using DDD.API.Application.DomainEventHandlers.CreateProducts;
 using DDD.API.Application.IntegrationEvents;
 using DDD.API.Application.IntegrationEvents.Events;
 using DDD.API.Application.Models;
 using DDD.API.Application.Queries.GetAll;
 using DDD.API.Application.Queries.GetFisrt;
-using DDD.API.Application.Queries.GetList;
+using DDD.API.Application.Queries.Paginated;
 using DDD.Domain.Entity;
 using DDD.Domain.Events;
 using DDD.Domain.IRepositories;
@@ -82,26 +81,14 @@ namespace DDD.API.Controllers
         }
 
         [HttpPost("search")]
-        public async Task<IActionResult> Search([FromBody] Productsr products)
-        {
-            _event.Publish(products);
-            return Ok(await _mediat.Send(new GetListProductsCommand() { Price = products.Price, Name = products.Name }));
+        public async Task<IActionResult> Search([FromBody] PaginatedListCommand paginatedList)
+        {          
+            return Ok(await _mediat.Send(new PaginatedListCommand() { KeySearch=paginatedList.KeySearch,PageNumber=paginatedList.PageNumber,fromPrice=paginatedList.fromPrice,toPrice=paginatedList.toPrice,PageIndex=paginatedList.PageIndex }));
         }
 
         public record getall : IntegrationEvent
         {
             public bool all { get; set; }
-        }
-        public record Productsr : IntegrationEvent
-        {
-            // public int Id { get; set; }
-            public string Name { get; set; }
-
-            public decimal Price { get; set; }
-
-            public string Image { get; set; }
-            public DateTime? CreateDate { get; set; }
-            public DateTime? ModiDate { get; set; }
         }
         [HttpPost("first", Name = "First")]
         public async Task<IActionResult> First(int id)

@@ -1,4 +1,4 @@
-using Autofac.Extensions.DependencyInjection;
+﻿using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -25,8 +25,12 @@ namespace UserAPI
                 {
                     webBuilder.UseFailing(options =>
                     {
+                        // url bật tắt
                         options.ConfigPath = "/Failing";
-                        options.NotFilteredPaths.AddRange(new[] { "/hc", "/liveness" });
+                        // url chặn, tuyệt đối, vd:/api/Users
+                        options.EndpointPaths.AddRange(new[] { "" });
+                        // url hông bị chặn, tuyệt đối
+                        options.NotFilteredPaths.AddRange(new[] { "" });
                     });
                     webBuilder.UseStartup<Startup>();
                 });

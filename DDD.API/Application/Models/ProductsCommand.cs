@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 
 namespace DDD.API.Application.Models
 {
+
+    // thêm, sửa, xoá
     public class ProductsCommand
     {
         public int Id { get; set; }

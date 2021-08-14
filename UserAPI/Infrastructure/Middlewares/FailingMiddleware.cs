@@ -34,10 +34,14 @@ namespace UserAPI.Infrastructure.Middlewares
                 _logger.LogInformation("Response for path {Path} will fail.", path);
                 context.Response.StatusCode = (int)System.Net.HttpStatusCode.InternalServerError;
                 context.Response.ContentType = "text/plain";
-                await context.Response.WriteAsync("Failed due to FailingMiddleware enabled.");
+                MessageFailingMiddleware messageFailing = new MessageFailingMiddleware();
+                messageFailing.StatusCode = context.Response.StatusCode;
+                messageFailing.Message = "Bạn hông thể truy cập vào trang này do bộ chặn FailingMiddleware đã được bật !";
+                await context.Response.WriteAsJsonAsync(messageFailing);
             }
             else
             {
+                // cho phép cho truy cập điểm cuối
                 await _next.Invoke(context);
             }
         }
@@ -55,18 +59,18 @@ namespace UserAPI.Infrastructure.Middlewares
             if (disable)
             {
                 _mustFail = false;
-                await SendOkResponse(context, "FailingMiddleware disabled. Further requests will be processed.");
+                await SendOkResponse(context, "FailingMiddleware đang tắt, các yêu cầu sẽ được xử lý !");
                 return;
             }
             if (enable)
             {
                 _mustFail = true;
-                await SendOkResponse(context, "FailingMiddleware enabled. Further requests will return HTTP 500");
+                await SendOkResponse(context, "FailingMiddleware đang bật, các yêu cầu sẽ trả về lỗi HTTP 500");
                 return;
             }
 
             // If reach here, that means that no valid parameter has been passed. Just output status
-            await SendOkResponse(context, string.Format("FailingMiddleware is {0}", _mustFail ? "enabled" : "disabled"));
+            await SendOkResponse(context, string.Format("FailingMiddleware đang {0}", _mustFail ? "bật" : "tắt"));
             return;
         }
 
@@ -74,7 +78,10 @@ namespace UserAPI.Infrastructure.Middlewares
         {
             context.Response.StatusCode = (int)System.Net.HttpStatusCode.OK;
             context.Response.ContentType = "text/plain";
-            await context.Response.WriteAsync(message);
+            MessageFailingMiddleware messageFailing = new MessageFailingMiddleware();
+            messageFailing.StatusCode = context.Response.StatusCode;
+            messageFailing.Message = message;
+            await context.Response.WriteAsJsonAsync(message);
         }
 
         private bool MustFail(HttpContext context)

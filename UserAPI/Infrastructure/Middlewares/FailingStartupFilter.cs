@@ -8,6 +8,9 @@ using UserAPI.Infrastructure.Exceptions;
 
 namespace UserAPI.Infrastructure.Middlewares
 {
+
+
+    // đăng ký chặn trong startup
     public class FailingStartupFilter : IStartupFilter
     {
         private readonly Action<FailingOptions> _options;

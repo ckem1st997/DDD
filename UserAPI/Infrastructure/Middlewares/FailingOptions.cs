@@ -7,6 +7,7 @@ namespace UserAPI.Infrastructure.Middlewares
 {
     public class FailingOptions
     {
+        // url để tiến hành bật, tắt bộ chặn
         public string ConfigPath = "/Failing";
         public List<string> EndpointPaths { get; set; } = new List<string>();
 
