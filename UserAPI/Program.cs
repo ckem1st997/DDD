@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using UserAPI.Infrastructure.Middlewares;
 
 namespace UserAPI
 {
@@ -22,6 +23,11 @@ namespace UserAPI
             .UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.UseFailing(options =>
+                    {
+                        options.ConfigPath = "/Failing";
+                        options.NotFilteredPaths.AddRange(new[] { "/hc", "/liveness" });
+                    });
                     webBuilder.UseStartup<Startup>();
                 });
     

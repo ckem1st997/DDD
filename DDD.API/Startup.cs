@@ -122,7 +122,7 @@ namespace DDD.API
                 });
             });
 
-            EventBusMQ.ConfigureEventBus(app);
+            app.ConfigureEventBus();
         }
     }
 }

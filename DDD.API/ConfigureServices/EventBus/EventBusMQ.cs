@@ -50,7 +50,7 @@ namespace DDD.API.ConfigureServices.EventBus
         }
 
 
-        public static void ConfigureEventBus(IApplicationBuilder app)
+        public static void ConfigureEventBus(this IApplicationBuilder app)
         {
             var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
 

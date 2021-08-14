@@ -16,8 +16,11 @@ using System.Threading.Tasks;
 using UserAPI.ConfigureServices.CustomConfiguration;
 using UserAPI.ConfigureServices.CustomIntegrations;
 using UserAPI.ConfigureServices.EventBus;
+using UserAPI.Controllers;
 using UserAPI.Domain.IRepositories;
 using UserAPI.Infrastructure.Context;
+using UserAPI.Infrastructure.Filters;
+using UserAPI.Infrastructure.Middlewares;
 using UserAPI.Infrastructure.Repositories;
 using UserAPI.Service.UserEntity;
 
@@ -36,10 +39,36 @@ namespace UserAPI
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+                options.Filters.Add(typeof(ValidateModelStateFilter));
+
+            }) // Added for functional tests
+                .AddApplicationPart(typeof(UsersController).Assembly)
+                .AddJsonOptions(options => options.JsonSerializerOptions.WriteIndented = true);
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "UserAPI", Version = "v1" });
+                c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.OAuth2,
+                    Flows = new OpenApiOAuthFlows()
+                    {
+                        Implicit = new OpenApiOAuthFlow()
+                        {
+                           // AuthorizationUrl = new Uri($"{Configuration.GetValue<string>("IdentityUrlExternal")}/connect/authorize"),
+                          //  TokenUrl = new Uri($"{Configuration.GetValue<string>("IdentityUrlExternal")}/connect/token"),
+                            Scopes = new Dictionary<string, string>()
+                            {
+                                { "basket", "Basket API" }
+                            }
+                        }
+                    }
+                });
+
+                c.OperationFilter<AuthorizeCheckOperationFilter>();
             });
             services.AddDbContext<UserContext>(options =>
             {
