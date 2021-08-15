@@ -1,0 +1,81 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "GrpcProduct";
+
+package ProductApi;
+import "google/protobuf/timestamp.proto";
+// note: -sự lặp lại-tương đương với list hoặc IEnumerable<T>
+
+
+//Service Gprc
+service ProductGrpc {
+	rpc CreateProductDraftFromUser(GrpcCreateProductsCommand) returns (GrpcResult) {}
+	rpc UpdateProductDraftFromUser(GrpcUpdateProductsCommand) returns (GrpcResult) {}
+	rpc DeleteProductDraftFromUser(GrpcDeleteProductsCommand) returns (GrpcResult) {}
+	rpc GetFirstProductDraftFromUser(GrpcGetFirstProductsCommand) returns (GrpcProductsDTO) {}
+	rpc PaginatedListDraftFromUser(GrpcPaginatedListCommand) returns (GrpcPaginatedList) {}
+}
+//Request
+message GrpcCreateProductsCommand {
+int32 id=1;
+      string name =2;
+      double price =3;
+      string image =4;
+}
+
+message GrpcUpdateProductsCommand {
+int32 id=1;
+      string name =2;
+      double price =3;
+      string image =4;
+}
+
+message GrpcDeleteProductsCommand {
+int32 id=1;
+}
+
+message GrpcGetFirstProductsCommand {
+	int32 id=1;   
+}
+
+message GrpcPaginatedListCommand {
+	     string keySearch =1;      
+         double fromPrice =2;        
+         double toPrice =3;        
+         int32 pageIndex =4;       
+         int32 pageNumber =5;  
+}
+
+//Response
+message GrpcProduct {
+      int32 id=1;
+      string name =2;;
+      double price =3;
+      string image =4;
+      google.protobuf.Timestamp createDate =5;
+      google.protobuf.Timestamp modiDate =6;
+}
+
+message GrpcProductsDTO {
+      int32 id=1;
+      string name =2;;
+      double price =3;
+      string image =4;
+      google.protobuf.Timestamp createDate =5;
+      google.protobuf.Timestamp modiDate =6;
+}
+
+message GrpcPaginatedList {
+     GrpcProductsDTO productsDTOs =1;
+    int32 totalCount =2;
+}
+
+message GrpcResult {
+      bool result=1;
+}
+
+
+//teamplate
+message Id {
+     int32 id=1;
+}

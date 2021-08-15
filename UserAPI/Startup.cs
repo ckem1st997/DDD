@@ -1,3 +1,4 @@
+using GrpcProduct;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -18,6 +19,7 @@ using UserAPI.ConfigureServices.CustomIntegrations;
 using UserAPI.ConfigureServices.EventBus;
 using UserAPI.Controllers;
 using UserAPI.Domain.IRepositories;
+using UserAPI.Infrastructure.ActionResults;
 using UserAPI.Infrastructure.Context;
 using UserAPI.Infrastructure.Filters;
 using UserAPI.Infrastructure.Middlewares;
@@ -39,14 +41,16 @@ namespace UserAPI
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers(options =>
-            {
-                options.Filters.Add(typeof(HttpGlobalExceptionFilter));
-                options.Filters.Add(typeof(ValidateModelStateFilter));
 
-            }) // Added for functional tests
-                .AddApplicationPart(typeof(UsersController).Assembly)
-                .AddJsonOptions(options => options.JsonSerializerOptions.WriteIndented = true);
+            services.AddControllers();
+            //services.AddControllers(options =>
+            //{
+            //    options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+            //    options.Filters.Add(typeof(ValidateModelStateFilter));
+
+            //}) // Added for functional tests
+            //    .AddApplicationPart(typeof(UsersController).Assembly)
+            //    .AddJsonOptions(options => options.JsonSerializerOptions.WriteIndented = true);
 
             services.AddSwaggerGen(c =>
             {
@@ -86,6 +90,14 @@ namespace UserAPI
             services.AddEventBus(Configuration);
             services.AddCustomConfiguration(Configuration);
             services.AddCustomIntegrations(Configuration);
+
+            services.AddGrpcClient<ProductGrpc.ProductGrpcClient>(o =>
+            {
+                o.Address = new Uri("https://localhost:44367");
+            })
+            .AddInterceptor<GrpcExceptionInterceptor>(); ;
+            services.AddTransient<GrpcExceptionInterceptor>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

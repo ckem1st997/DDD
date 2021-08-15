@@ -35,7 +35,7 @@ namespace DDD.API.Application.DomainEventHandlers.CreateProducts
             }
             if (domainEvent.Products != null)
             {
-                domainEvent.Products.Name = "test INotificationHandler";
+                domainEvent.Products.Image = "test INotificationHandler thành công";
                 _repository.Update(domainEvent.Products);
                 await _repository.UnitOfWork.SaveEntitiesAsync();
             }

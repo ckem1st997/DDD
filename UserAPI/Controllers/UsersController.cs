@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using GrpcProduct;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -14,13 +15,31 @@ namespace UserAPI.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+
+        private readonly ProductGrpc.ProductGrpcClient _client;
         private readonly IUserRepositories _userRepositories;
         private readonly IUsersIntegrationEventService _usersIntegrationEventService;
-        public UsersController(IUserRepositories userRepositories, IUsersIntegrationEventService usersIntegrationEventService)
+        public UsersController(ProductGrpc.ProductGrpcClient client,IUserRepositories userRepositories, IUsersIntegrationEventService usersIntegrationEventService)
         {
             _userRepositories = userRepositories;
             _usersIntegrationEventService = usersIntegrationEventService;
+            _client = client;
+
         }
+
+
+        [HttpPost("Addgprc")]
+        public async Task<IActionResult> Add(GrpcCreateProductsCommand users)
+        {
+            if (users is null)
+            {
+                throw new ArgumentNullException(nameof(users));
+            }
+            var mode = await _client.CreateProductDraftFromUserAsync(users);
+            return Ok(mode);
+        }
+
+
 
 
         [HttpPost("Add")]
