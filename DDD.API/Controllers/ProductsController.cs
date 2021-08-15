@@ -55,10 +55,11 @@ namespace DDD.API.Controllers
             // truyền thực thể vào INotificationHandler để xử lý tác vụ tiếp theo
             // ví dụ sau khi tạo đơn hàng thành công, sẽ gửi email, và phần check đơn hàng
             // rồi gửi email sẽ được thực hiện tạo phương thức sau, ở đây là : CreateDomainEventHandler
-            await _mediat.Publish(new CreateProductDomainEvent(mode));
+            //  await _mediat.Publish(new CreateProductDomainEvent(mode));
             // sau đó trả về kết quả
             // note: thêm, sửa, xoá có thể hông cần, tuỳ mục đích
-            return CreatedAtRoute("First", new { id = mode.Id }, mode);
+            // return CreatedAtRoute("First", new { id = mode.Id }, mode);
+            return Ok(true);
         }
 
         [HttpPost("add-user")]

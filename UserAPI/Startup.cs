@@ -43,14 +43,14 @@ namespace UserAPI
 
 
             services.AddControllers();
-            //services.AddControllers(options =>
-            //{
-            //    options.Filters.Add(typeof(HttpGlobalExceptionFilter));
-            //    options.Filters.Add(typeof(ValidateModelStateFilter));
+            services.AddControllers(options =>
+            {
+                options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+                options.Filters.Add(typeof(ValidateModelStateFilter));
 
-            //}) // Added for functional tests
-            //    .AddApplicationPart(typeof(UsersController).Assembly)
-            //    .AddJsonOptions(options => options.JsonSerializerOptions.WriteIndented = true);
+            }) // Added for functional tests
+                .AddApplicationPart(typeof(UsersController).Assembly)
+                .AddJsonOptions(options => options.JsonSerializerOptions.WriteIndented = true);
 
             services.AddSwaggerGen(c =>
             {
@@ -95,7 +95,7 @@ namespace UserAPI
             {
                 o.Address = new Uri("https://localhost:5001");
             })
-            .AddInterceptor<GrpcExceptionInterceptor>(); ;
+            .AddInterceptor<GrpcExceptionInterceptor>();
             services.AddTransient<GrpcExceptionInterceptor>();
 
         }

@@ -1,9 +1,12 @@
 ﻿using GrpcProduct;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using UserAPI.Domain.Entity;
 using UserAPI.IntegrationEvents;
@@ -15,15 +18,16 @@ namespace UserAPI.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-
+        private readonly IHttpClientFactory _clientFactory;
         private readonly ProductGrpc.ProductGrpcClient _client;
         private readonly IUserRepositories _userRepositories;
         private readonly IUsersIntegrationEventService _usersIntegrationEventService;
-        public UsersController(ProductGrpc.ProductGrpcClient client,IUserRepositories userRepositories, IUsersIntegrationEventService usersIntegrationEventService)
+        public UsersController(IHttpClientFactory clientFactory,ProductGrpc.ProductGrpcClient client,IUserRepositories userRepositories, IUsersIntegrationEventService usersIntegrationEventService)
         {
             _userRepositories = userRepositories;
             _usersIntegrationEventService = usersIntegrationEventService;
             _client = client;
+            _clientFactory = clientFactory;
 
         }
 
@@ -38,6 +42,47 @@ namespace UserAPI.Controllers
             var mode = await _client.CreateProductDraftFromUserAsync(users);
             return Ok(mode);
         }
+
+        [HttpPost("Editgprc")]
+        public async Task<IActionResult> Edit(GrpcUpdateProductsCommand users)
+        {
+            if (users is null)
+            {
+                throw new ArgumentNullException(nameof(users));
+            }
+            var mode = await _client.UpdateProductDraftFromUserAsync(users);
+            return Ok(mode);
+        }
+
+        [HttpPost("Deletegprc")]
+        public async Task<IActionResult> Delelte(GrpcDeleteProductsCommand users)
+        {
+            if (users is null)
+            {
+                throw new ArgumentNullException(nameof(users));
+            }
+            var mode = await _client.DeleteProductDraftFromUserAsync(users);
+            return Ok(mode);
+        }
+
+
+
+        [HttpPost("Listgprc")]
+        public async Task<IActionResult> List(GrpcPaginatedListCommand users)
+        {
+            if (users is null)
+            {
+                throw new ArgumentNullException(nameof(users));
+            }
+            var mode = await _client.PaginatedListDraftFromUserAsync(users);
+            return Ok(mode);
+        }
+        
+
+
+
+
+
 
 
 

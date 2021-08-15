@@ -13,8 +13,8 @@ namespace DDD.API.Application.HealthChecks
         {
             services.AddHealthChecksUI(setupSettings: setup =>
             {
-                setup.SetEvaluationTimeInSeconds(5); //Configures the UI to poll for healthchecks updates every 5 seconds
-                setup.SetApiMaxActiveRequests(5);
+                setup.SetEvaluationTimeInSeconds(60); //Configures the UI to poll for healthchecks updates every 5 seconds
+                setup.SetApiMaxActiveRequests(60);
                 // thêm điểm cuối để check
                 setup.AddHealthCheckEndpoint("ProductsAPI", "/healthz");
                 setup.MaximumHistoryEntriesPerEndpoint(50);
