@@ -39,11 +39,11 @@ namespace DDD.API.Controllers
             _productsIntegrationEventService = productsIntegrationEventService;
         }
 
-        [HttpPost("getall")]
-        public async Task<IActionResult> Get([FromBody] getall getall)
+        [HttpGet("getall")]
+        public async Task<IActionResult> Get()
         {
-            _event.Publish(getall);
-            return Ok(await _mediat.Send(new GetAllProductsCommand() { All = getall.all }));
+            // _event.Publish(getall);
+            return Ok(await _mediat.Send(new GetAllProductsCommand() { All = true }));
         }
 
         [HttpPost]
@@ -55,11 +55,10 @@ namespace DDD.API.Controllers
             // truyền thực thể vào INotificationHandler để xử lý tác vụ tiếp theo
             // ví dụ sau khi tạo đơn hàng thành công, sẽ gửi email, và phần check đơn hàng
             // rồi gửi email sẽ được thực hiện tạo phương thức sau, ở đây là : CreateDomainEventHandler
-            //  await _mediat.Publish(new CreateProductDomainEvent(mode));
+            await _mediat.Publish(new CreateProductDomainEvent(mode));
             // sau đó trả về kết quả
             // note: thêm, sửa, xoá có thể hông cần, tuỳ mục đích
-            // return CreatedAtRoute("First", new { id = mode.Id }, mode);
-            return Ok(true);
+            return CreatedAtRoute("First", new { id = mode.Id }, mode);
         }
 
         [HttpPost("add-user")]
@@ -83,14 +82,10 @@ namespace DDD.API.Controllers
 
         [HttpPost("search")]
         public async Task<IActionResult> Search([FromBody] PaginatedListCommand paginatedList)
-        {          
-            return Ok(await _mediat.Send(new PaginatedListCommand() { KeySearch=paginatedList.KeySearch,PageNumber=paginatedList.PageNumber,fromPrice=paginatedList.fromPrice,toPrice=paginatedList.toPrice,PageIndex=paginatedList.PageIndex }));
+        {
+            return Ok(await _mediat.Send(new PaginatedListCommand() { KeySearch = paginatedList.KeySearch, PageNumber = paginatedList.PageNumber, fromPrice = paginatedList.fromPrice, toPrice = paginatedList.toPrice, PageIndex = paginatedList.PageIndex }));
         }
 
-        public record getall : IntegrationEvent
-        {
-            public bool all { get; set; }
-        }
         [HttpPost("first", Name = "First")]
         public async Task<IActionResult> First(int id)
         {

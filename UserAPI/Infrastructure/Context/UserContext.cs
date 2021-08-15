@@ -40,6 +40,8 @@ namespace UserAPI.Infrastructure.Context
             else
                 return false;
         }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+         => optionsBuilder.LogTo(Console.WriteLine);
 
         public async Task<IDbContextTransaction> BeginTransactionAsync()
         {

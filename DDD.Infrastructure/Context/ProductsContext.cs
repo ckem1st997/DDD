@@ -43,6 +43,9 @@ namespace DDD.Infrastructure.Context
 
         }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+            => optionsBuilder.LogTo(Console.WriteLine);
+
         public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             // Dispatch Domain Events collection. 
