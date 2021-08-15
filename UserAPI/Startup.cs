@@ -93,7 +93,7 @@ namespace UserAPI
 
             services.AddGrpcClient<ProductGrpc.ProductGrpcClient>(o =>
             {
-                o.Address = new Uri("https://localhost:44367");
+                o.Address = new Uri("https://localhost:5001");
             })
             .AddInterceptor<GrpcExceptionInterceptor>(); ;
             services.AddTransient<GrpcExceptionInterceptor>();
