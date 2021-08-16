@@ -42,7 +42,7 @@ namespace DDD.API.Controllers
 
         [HttpGet("getall")]
         public async Task<IActionResult> Get()
-        {          
+        {
             // _event.Publish(getall);
             return Ok(await _mediat.Send(new GetAllProductsCommand() { All = true, BypassCache = true }));
         }
@@ -91,7 +91,7 @@ namespace DDD.API.Controllers
         [HttpPost("first", Name = "First")]
         public async Task<IActionResult> First(int id)
         {
-            return Ok(await _mediat.Send(new GetFirstProductsCommand() { Id = id,BypassCache=false }));
+            return Ok(await _mediat.Send(new GetFirstProductsCommand() { Id = id, BypassCache = true }));
         }
 
         [HttpPost("edit")]

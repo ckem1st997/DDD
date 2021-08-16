@@ -23,7 +23,7 @@ namespace DDD.API.Application.Queries.GetFisrt
         }
         public async Task<ProductsDTO> Handle(GetFirstProductsCommand request, CancellationToken cancellationToken)
         {
-            string sql = @"select * from Products where Id=@id";
+            string sql = @"select TOP 1 * from Products where Id=@id";
             DynamicParameters parameter = new DynamicParameters();
             parameter.Add("@id", request.Id);
             return await _repository.GetAyncFirst<ProductsDTO>(sql, parameter, CommandType.Text);

@@ -4,7 +4,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Serilog;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +17,7 @@ namespace DDD.API.Application.Behaviors
     public class CachingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : ICacheableMediatrQuery
     {
         private readonly IDistributedCache _cache;
-        private readonly Microsoft.Extensions.Logging.ILogger _logger;
+        private readonly ILogger _logger;
         private readonly CacheSettings _settings;
         public CachingBehavior(IDistributedCache cache, ILogger<TResponse> logger, IOptions<CacheSettings> settings)
         {
@@ -34,14 +34,14 @@ namespace DDD.API.Application.Behaviors
                 response = await next();
                 var slidingExpiration = request.SlidingExpiration == null ? TimeSpan.FromHours(_settings.SlidingExpiration) : request.SlidingExpiration;
                 var options = new DistributedCacheEntryOptions { SlidingExpiration = slidingExpiration };
-                var serializedData = Encoding.Default.GetBytes(JsonConvert.SerializeObject(response));
-                await _cache.SetAsync((string)request.CacheKey, serializedData, options, cancellationToken);
+                var serializedData = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(response));
+                await _cache.SetAsync(request.CacheKey, serializedData, options, cancellationToken);
                 return response;
             }
             var cachedResponse = await _cache.GetAsync(request.CacheKey, cancellationToken);
             if (cachedResponse != null)
             {
-                response = JsonConvert.DeserializeObject<TResponse>(Encoding.Default.GetString(cachedResponse));
+                response = JsonConvert.DeserializeObject<TResponse>(Encoding.UTF8.GetString(cachedResponse));
                 _logger.LogInformation($"Fetched from Cache -> '{request.CacheKey}'.");
             }
             else
