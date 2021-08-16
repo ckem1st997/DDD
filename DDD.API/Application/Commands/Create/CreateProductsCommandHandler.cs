@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DDD.API.Application.Commands.Create
 {
-    public class CreateProductsCommandHandler : IRequestHandler<CreateProductsCommand, Products>
+    public class CreateProductsCommandHandler : IRequestHandler<CreateProductsCommand, bool>
     {
         private readonly IRepositoryEF<Products> _repository;
         private readonly IMapper _mapper;
@@ -20,7 +20,7 @@ namespace DDD.API.Application.Commands.Create
             _mapper = mapper;
         }
 
-        public async Task<Products> Handle(CreateProductsCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(CreateProductsCommand request, CancellationToken cancellationToken)
         {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
@@ -28,8 +28,9 @@ namespace DDD.API.Application.Commands.Create
             mode.CreateDate = DateTime.UtcNow;
             mode.ModiDate = DateTime.UtcNow;
             var create = await _repository.AddAsync(mode);
-            await _repository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
-            return create;
+            if (create != null)
+                return await _repository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
+            return false;
         }
     }
 }

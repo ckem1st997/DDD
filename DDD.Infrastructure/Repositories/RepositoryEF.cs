@@ -33,10 +33,7 @@ namespace DDD.Infrastructure.Repositories
             {
                 return (await _dbSet.AddAsync(entity)).Entity;
             }
-            else
-            {
-                return entity;
-            }
+            return null;
 
         }
 

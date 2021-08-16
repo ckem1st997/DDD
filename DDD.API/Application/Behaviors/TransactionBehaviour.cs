@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 
 namespace DDD.API.Application.Behaviors
 {
+
+    //check connect db khi có request xuống lấy db
     public class TransactionBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     {
         private readonly ILogger<TransactionBehaviour<TRequest, TResponse>> _logger;

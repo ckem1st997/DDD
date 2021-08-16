@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace DDD.API.Application.Commands.Create
 {
     [DataContract]
-    public class CreateProductsCommand: IRequest<Products>
+    public class CreateProductsCommand: IRequest<bool>
     {
         [DataMember]
         public ProductsCommand ProductsCommand { get; set; }

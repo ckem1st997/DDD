@@ -35,6 +35,7 @@ using HealthChecks.UI.Client;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using DDD.API.Application.HealthChecks;
 using GrpcProduct;
+using DDD.API.Application.Cache;
 
 namespace DDD.API
 {
@@ -89,7 +90,7 @@ namespace DDD.API
             services.AddCustomIntegrations(Configuration);
             services.AddHealthChecksProducts(Configuration);
             services.AddHealthChecksUI();
-
+            services.AddCache(Configuration);
             services.AddGrpc(options =>
             {
                 options.EnableDetailedErrors = true;

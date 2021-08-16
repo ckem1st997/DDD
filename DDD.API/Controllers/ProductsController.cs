@@ -39,11 +39,12 @@ namespace DDD.API.Controllers
             _productsIntegrationEventService = productsIntegrationEventService;
         }
 
+
         [HttpGet("getall")]
         public async Task<IActionResult> Get()
-        {
+        {          
             // _event.Publish(getall);
-            return Ok(await _mediat.Send(new GetAllProductsCommand() { All = true }));
+            return Ok(await _mediat.Send(new GetAllProductsCommand() { All = true, BypassCache = true }));
         }
 
         [HttpPost]
@@ -55,10 +56,11 @@ namespace DDD.API.Controllers
             // truyền thực thể vào INotificationHandler để xử lý tác vụ tiếp theo
             // ví dụ sau khi tạo đơn hàng thành công, sẽ gửi email, và phần check đơn hàng
             // rồi gửi email sẽ được thực hiện tạo phương thức sau, ở đây là : CreateDomainEventHandler
-            await _mediat.Publish(new CreateProductDomainEvent(mode));
+            //  await _mediat.Publish(new CreateProductDomainEvent(mode));
             // sau đó trả về kết quả
             // note: thêm, sửa, xoá có thể hông cần, tuỳ mục đích
-            return CreatedAtRoute("First", new { id = mode.Id }, mode);
+            // return CreatedAtRoute("First", new { id = mode.Id }, mode);
+            return Ok(mode);
         }
 
         [HttpPost("add-user")]
@@ -89,7 +91,7 @@ namespace DDD.API.Controllers
         [HttpPost("first", Name = "First")]
         public async Task<IActionResult> First(int id)
         {
-            return Ok(await _mediat.Send(new GetFirstProductsCommand() { Id = id }));
+            return Ok(await _mediat.Send(new GetFirstProductsCommand() { Id = id,BypassCache=false }));
         }
 
         [HttpPost("edit")]
